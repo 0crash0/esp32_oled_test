@@ -1,57 +1,82 @@
 #include <WiFi.h>
+#include <WiFiClient.h>
+#include <WiFiAP.h>
 
 int tryDelay = 500;
 int numberOfTries = 20;
 
- char* ssid = "Lissa22";
- char* password = "sjNyb6hr";
+char* ssid = "Lissa22";
+char* password = "sjNyb6hr";
+
+const char *ssidAP = "ESP32";
+const char *passwordAP = "";
+
 
 void connect_WIFI() {
-  Serial.println();
-  Serial.print("[WiFi] Connecting to ");
-  Serial.println(ssid);
-  WiFi.mode(WIFI_STA);
-  WiFi.begin(ssid, password);
-  
-  while (true) {
+  if (ssid == "" || password == "") {
+    Serial.println("No values saved for network credentials");
+    Serial.println("Configuring access point...");
 
-    switch (WiFi.status()) {
-      case WL_NO_SSID_AVAIL:
-        Serial.println("[WiFi] SSID not found");
-        break;
-      case WL_CONNECT_FAILED:
-        Serial.print("[WiFi] Failed - WiFi not connected! Reason: ");
-        return;
-        break;
-      case WL_CONNECTION_LOST:
-        Serial.println("[WiFi] Connection was lost");
-        break;
-      case WL_SCAN_COMPLETED:
-        Serial.println("[WiFi] Scan is completed");
-        break;
-      case WL_DISCONNECTED:
-        Serial.println("[WiFi] WiFi is disconnected");
-        break;
-      case WL_CONNECTED:
-        Serial.println("[WiFi] WiFi is connected!");
-        Serial.print("[WiFi] IP address: ");
-        Serial.println(WiFi.localIP());
-        return;
-        break;
-      default:
-        Serial.print("[WiFi] WiFi Status: ");
-        Serial.println(WiFi.status());
-        break;
-    }
-    delay(tryDelay);
-
-    if (numberOfTries <= 0) {
-      Serial.print("[WiFi] Failed to connect to WiFi!");
-      // Use disconnect function to force stop trying to connect
-      WiFi.disconnect();
+    // You can remove the password parameter if you want the AP to be open.
+    // a valid password must have more than 7 characters
+    if (!WiFi.softAP(ssidAP, passwordAP)) {
+      log_e("Soft AP creation failed.");
       return;
-    } else {
-      numberOfTries--;
+    }
+    IPAddress myIP = WiFi.softAPIP();
+    Serial.print("AP IP address: ");
+    Serial.println(myIP);
+    server.begin();
+
+    Serial.println("Server started");
+  } else {
+    // Connect to Wi-Fi
+
+    Serial.print("[WiFi] Connecting to ");
+    Serial.println(ssid);
+    WiFi.mode(WIFI_STA);
+    WiFi.begin(ssid.c_str(), password.c_str());
+
+    while (true) {
+
+      switch (WiFi.status()) {
+        case WL_NO_SSID_AVAIL:
+          Serial.println("[WiFi] SSID not found");
+          break;
+        case WL_CONNECT_FAILED:
+          Serial.print("[WiFi] Failed - WiFi not connected! Reason: ");
+          return;
+          break;
+        case WL_CONNECTION_LOST:
+          Serial.println("[WiFi] Connection was lost");
+          break;
+        case WL_SCAN_COMPLETED:
+          Serial.println("[WiFi] Scan is completed");
+          break;
+        case WL_DISCONNECTED:
+          Serial.println("[WiFi] WiFi is disconnected");
+          break;
+        case WL_CONNECTED:
+          Serial.println("[WiFi] WiFi is connected!");
+          Serial.print("[WiFi] IP address: ");
+          Serial.println(WiFi.localIP());
+          return;
+          break;
+        default:
+          Serial.print("[WiFi] WiFi Status: ");
+          Serial.println(WiFi.status());
+          break;
+      }
+      delay(tryDelay);
+
+      if (numberOfTries <= 0) {
+        Serial.print("[WiFi] Failed to connect to WiFi!");
+        // Use disconnect function to force stop trying to connect
+        WiFi.disconnect();
+        return;
+      } else {
+        numberOfTries--;
+      }
     }
   }
 }
