@@ -1,5 +1,6 @@
 // #include <SPI.h>
-#include <TFT_eSPI.h>       // Include the graphics library
+#include <TFT_eSPI.h>  // Include the graphics library
+#include "globalVars.h"
 TFT_eSPI tft_screen = TFT_eSPI();  // Create object "tft"
 
 
@@ -24,10 +25,10 @@ uint8_t inner_radius = radius - thickness;  // Calculate inner radius (can be 0 
 bool arc_end = 0;
 uint16_t start_angle = 0;
 
-int angle = 20;
+
 bool up = true;
 
-void screen_init(){
+void screen_init() {
   tft_screen.init();
   tft_screen.setRotation(0);
   tft_screen.fillScreen(TFT_BLACK);

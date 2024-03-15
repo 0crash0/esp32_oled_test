@@ -1,16 +1,24 @@
 #include <WiFi.h>
 #include <WiFiClient.h>
 #include <WiFiAP.h>
+#include "globalVars.h"
 
 int tryDelay = 500;
 int numberOfTries = 20;
 
-char* ssid = "Lissa22";
-char* password = "sjNyb6hr";
-
 const char *ssidAP = "ESP32";
 const char *passwordAP = "";
 
+void startWifiAP() {
+  if (!WiFi.softAP(ssidAP, passwordAP)) {
+    log_e("Soft AP creation failed.");
+    return;
+  }
+  IPAddress myIP = WiFi.softAPIP();
+  Serial.print("AP IP address: ");
+  Serial.println(myIP);
+  Serial.println("wifi AP started");
+}
 
 void connect_WIFI() {
   if (ssid == "" || password == "") {
@@ -19,16 +27,7 @@ void connect_WIFI() {
 
     // You can remove the password parameter if you want the AP to be open.
     // a valid password must have more than 7 characters
-    if (!WiFi.softAP(ssidAP, passwordAP)) {
-      log_e("Soft AP creation failed.");
-      return;
-    }
-    IPAddress myIP = WiFi.softAPIP();
-    Serial.print("AP IP address: ");
-    Serial.println(myIP);
-    server.begin();
-
-    Serial.println("Server started");
+    startWifiAP();
   } else {
     // Connect to Wi-Fi
 
@@ -36,6 +35,7 @@ void connect_WIFI() {
     Serial.println(ssid);
     WiFi.mode(WIFI_STA);
     WiFi.begin(ssid.c_str(), password.c_str());
+    Serial.println("Hello, SSID: " + ssid + " PASS: " + password);
 
     while (true) {
 
@@ -73,6 +73,7 @@ void connect_WIFI() {
         Serial.print("[WiFi] Failed to connect to WiFi!");
         // Use disconnect function to force stop trying to connect
         WiFi.disconnect();
+        startWifiAP();
         return;
       } else {
         numberOfTries--;
