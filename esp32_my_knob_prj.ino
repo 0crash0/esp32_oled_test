@@ -2,37 +2,29 @@
 
 #include "wifi.h"
 #include "server.h"
-
-//wifi
-
-#define EEPROM_SIZE 2048
-
+#include "screen.h"
+#include "config.h"
 
 
 void setup(void) {
-    Serial.begin(115200);
-  EEPROM.begin(EEPROM_SIZE);
-  char read_eeprom[8];
-  Serial.print("ITEM_INSIDE_SERIAL get=");
-    EEPROM.get(0,read_eeprom);
-    Serial.println(read_eeprom);
-    Serial.print("ITEM_INSIDE_SERIAL get=");
-    EEPROM.get(10,angle);
-    Serial.println(angle);
-  
-
-
+  Serial.begin(115200);
+  prefInit();
   screen_init();
 
   connect_WIFI();
   Serial.print("Start server");
   set_temp();
   prepare_server();
-  
 }
 
-void loop() {
 
+unsigned long previousMillis = 0;
+
+void loop() {
+  unsigned long currentMillis = millis();
+  if (currentMillis - previousMillis >= 250) {
+    set_temp();
+  }
   //if (count < 30)
-  //delay(10);  // After 15s draw as fast as possible!
+  //delay(250);  // After 15s draw as fast as possible!
 }
