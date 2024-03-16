@@ -26,15 +26,15 @@ void storeWiFiCreds() {
   pref.putString("SSID", ssid);
   pref.putString("WPassword", password);
 
-  Serial.println("Network Credentials have been Saved");
-  Serial.println("Hello, SSID: " + ssid + " PASS: " + password);
+  //Serial.println("Network Credentials have been Saved");
+  //Serial.println("Hello, SSID: " + ssid + " PASS: " + password);
   pref.end();
 }
 
 void storeTempValue() {
   pref.begin("Temp", false);
   pref.putInt("value", angle);
-  Serial.println("temp saved");
+ // Serial.println("temp saved");
   pref.end();
 }
 #endif

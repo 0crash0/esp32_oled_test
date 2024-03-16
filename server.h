@@ -299,7 +299,7 @@ void prepare_server() {
     if (request->hasParam("ssid", true) and request->hasParam("password", true)) {
       ssid = request->getParam("ssid", true)->value();
       password = request->getParam("password", true)->value();
-      Serial.println("/savessid, SSID: " + ssid + " PASS: " + password);
+      //Serial.println("/savessid, SSID: " + ssid + " PASS: " + password);
       storeWiFiCreds();
     }
     request->send(200, "text/plain", "Hello, SSID: " + ssid + " PASS: " + password);
